@@ -156,6 +156,6 @@ HCURSOR CmfcdlgDlg::OnQueryDragIcon()
 
 void CmfcdlgDlg::OnBnClickedOk()
 {
-	PyExecA("msgbox('hi,python.')");
+	PyExecA("msgbox('hi,python.','title')");
 	//CDialogEx::OnOK();
 }
