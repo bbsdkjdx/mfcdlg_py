@@ -157,12 +157,27 @@ int PyEvalA(char *arg)
 	return PyLong_AS_LONG(PyObject_GetAttrString(pModule, "__ok"));
 }
 
-int PyEvalOrExecW(wchar_t *arg)
+char *evals_cmd =
+"try:\n"
+"    "PY_TMP_NAME"=str(eval("PY_TMP_NAME"))\n"
+"    __ok=1\n"
+"except Exception as exp : \n"
+"    "PY_TMP_NAME" =str(exp)\n"
+"    __ok=0"
+;
+wchar_t *PyEvalOrExecW(wchar_t *arg)
 {
 	PySetStrW(arg);
-	if (PyEvalW(arg)) return true;
-	PySetStrW(arg);
-	return PyExecW(arg);
+	PyRun_SimpleString(evals_cmd);
+	if (PyLong_AS_LONG(PyObject_GetAttrString(pModule, "__ok")))
+	{
+		return PyGetStr();
+	}
+	if (PyExecW(arg))
+	{
+		return _T("");
+	}
+	return PyGetStr();
 }
 
 int PyRunFile(wchar_t *fn)
@@ -184,6 +199,42 @@ void reg_exe_fun(char *fnn, char *fmt, void *pfn,char *doc)
 void PySendMsg(char *msg, unsigned int p1,unsigned int p2)
 {
 	PyObject_CallMethod(pModule, "on_msg__", "sII", msg, p1, p2);
+}
+
+void InteractInConsole()
+{
+	AllocConsole();
+	SetConsoleTitleA("内嵌测试控制台");
+
+	HWND hwn = ::GetConsoleWindow();
+	if (hwn)
+	{
+		HMENU mn = ::GetSystemMenu(hwn, FALSE);
+		if (mn)
+		{
+			DeleteMenu(mn, SC_CLOSE, MF_BYCOMMAND);
+		}
+	}
+	SetConsoleCtrlHandler(0, true);
+	TCHAR Buffer[1000]; //开缓存
+	DWORD dwCount = 0;//已输入数
+	HANDLE hdlRead = GetStdHandle(STD_INPUT_HANDLE);
+	HANDLE hdlWrite = GetStdHandle(STD_OUTPUT_HANDLE);
+	WriteConsole(hdlWrite, _T("press Ctrl+C to quit.\n"), 22, NULL, NULL);
+	while (1)
+	{
+		WriteConsole(hdlWrite, _T(">>>"), 3, NULL, NULL);
+		ReadConsole(hdlRead, Buffer, 100, &dwCount, NULL);
+		if (!dwCount)
+		{
+			break;
+		}
+		Buffer[dwCount - 2] = 0;//delete '\n\r'
+		TCHAR *ptc = PyEvalOrExecW(Buffer);
+		WriteConsole(hdlWrite, ptc, wcslen(ptc), NULL, NULL);
+		WriteConsole(hdlWrite, _T("\n"), 1, NULL, NULL);
+	}
+	FreeConsole();
 }
 
 ///////////////////////auto initialize python.///////////////////////////////

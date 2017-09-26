@@ -14,9 +14,10 @@ int PyExecW(wchar_t *arg);
 int PyExecA(char *arg);//exec(arg).return true if success.use PyGetResult() to get exception info if fail.;
 int PyEvalW(wchar_t *arg);
 int PyEvalA(char *arg);//eval(arg).return true if success,use PyGetResult() to get result.;
-int PyEvalOrExecW(wchar_t *arg);
+wchar_t *PyEvalOrExecW(wchar_t *arg);
 int PyRunFile(wchar_t *fn);
 void PySendMsg(char *msg, unsigned int p1, unsigned int p2);
+void InteractInConsole();
 
 //'#':'ctypes.c_void_p', 
 //'s' : 'ctypes.c_char_p',        'S' : 'ctypes.c_wchar_p',
