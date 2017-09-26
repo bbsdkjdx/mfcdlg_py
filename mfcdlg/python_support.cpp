@@ -223,8 +223,8 @@ void InteractInConsole()
 	WriteConsole(hdlWrite, _T("press Ctrl+C to quit.\n"), 22, NULL, NULL);
 	while (1)
 	{
-		WriteConsole(hdlWrite, _T(">>>"), 3, NULL, NULL);
-		ReadConsole(hdlRead, Buffer, 100, &dwCount, NULL);
+		WriteConsole(hdlWrite, _T(">>"), 2, NULL, NULL);
+		ReadConsole(hdlRead, Buffer, 1000, &dwCount, NULL);
 		if (!dwCount)
 		{
 			break;

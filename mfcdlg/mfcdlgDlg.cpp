@@ -156,6 +156,19 @@ HCURSOR CmfcdlgDlg::OnQueryDragIcon()
 
 void CmfcdlgDlg::OnBnClickedOk()
 {
-	PyExecA("msgbox('hi,python.','title')");
+	PySetDouble(0.123456789, 0);
+	PySetInt(123123123123123, 1);
+	PySetStrA("abcd", 2);
+
 	//CDialogEx::OnOK();
+}
+
+
+BOOL CmfcdlgDlg::PreTranslateMessage(MSG* pMsg)
+{
+	if (pMsg->message==256 && pMsg->wParam==123)//F12 pressed.
+	{
+		InteractInConsole();
+	}
+	return CDialogEx::PreTranslateMessage(pMsg);
 }
