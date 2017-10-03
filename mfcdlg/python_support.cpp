@@ -8,7 +8,7 @@ PyObject  *pModule = nullptr;
 char *pre_code =
 "import ctypes,os\n"
 "def msgbox(s,title=''):\n"
-" ctypes.windll.user32.MessageBoxW(ctypes.windll.user32.GetForegroundWindow(),s,title,0x40)\n"
+" ctypes.windll.user32.MessageBoxW(ctypes.windll.user32.GetForegroundWindow(),str(s),title,0x40)\n"
 "exe_fun__ = dict()\n"
 "py_fun__ = dict()\n"
 "stack__=[0]*50\n"
