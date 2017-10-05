@@ -231,6 +231,10 @@ void InteractInConsole()
 		}
 		Buffer[dwCount - 2] = 0;//delete '\n\r'
 		TCHAR *ptc = PyEvalOrExecW(Buffer);
+		if (ptc[0]==0)
+		{
+			continue;
+		}
 		WriteConsole(hdlWrite, ptc, wcslen(ptc), NULL, NULL);
 		WriteConsole(hdlWrite, _T("\n"), 1, NULL, NULL);
 	}
