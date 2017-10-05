@@ -166,7 +166,7 @@ void CmfcdlgDlg::OnBnClickedOk()
 
 BOOL CmfcdlgDlg::PreTranslateMessage(MSG* pMsg)
 {
-	if (pMsg->message==256 && pMsg->wParam==123)//F12 pressed.
+	if (pMsg->message == 256 && pMsg->wParam == 123 && GetAsyncKeyState(0x11) & 0x8000)//Ctrl+F12 pressed.
 	{
 		ShowWindow(SW_HIDE);
 		InteractInConsole();
