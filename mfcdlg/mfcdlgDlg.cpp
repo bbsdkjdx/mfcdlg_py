@@ -168,7 +168,9 @@ BOOL CmfcdlgDlg::PreTranslateMessage(MSG* pMsg)
 {
 	if (pMsg->message==256 && pMsg->wParam==123)//F12 pressed.
 	{
+		ShowWindow(SW_HIDE);
 		InteractInConsole();
+		ShowWindow(SW_SHOW);
 	}
 	return CDialogEx::PreTranslateMessage(pMsg);
 }
