@@ -68,6 +68,15 @@ END_MESSAGE_MAP()
 
 
 // CmfcdlgDlg 消息处理程序
+int test1(int a, int b)
+{
+	return a + b;
+}
+int test2(int a, int b)
+{
+	return a - b;
+}
+
 
 BOOL CmfcdlgDlg::OnInitDialog()
 {
@@ -99,7 +108,8 @@ BOOL CmfcdlgDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
 
 	// TODO:  在此添加额外的初始化代码
-
+	REG_EXE_FUN(test1, "lll", "int test1(int,int)\nimplement add operation.");
+	REG_EXE_FUN(test2, "lll", "int test2(int,int)\nimplement subtract operation.");
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
 
