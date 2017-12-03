@@ -16,7 +16,6 @@ int PyEvalW(wchar_t *arg);
 int PyEvalA(char *arg);//eval(arg).return true if success,use PyGetResult() to get result.;
 wchar_t *PyEvalOrExecW(wchar_t *arg);
 int PyRunFile(wchar_t *fn);
-void PySendMsg(char *msg, unsigned int p1, unsigned int p2);
 void InteractInConsole();
 
 //'#':'ctypes.c_void_p', 

@@ -32,17 +32,7 @@ char *pre_code =
 "    cmd += ')('+str(adr)+')'\n"
 "    exe.__dict__[fnn] = eval(cmd)\n"
 "    exe.__dict__[fnn].__doc__=doc\n"
-//py_fun__ is used when call on_msg__ funciton in exe.
-"py_fun__ = dict()\n"
-"def on_msg__(s, p1, p2):\n"
-"    if s not in py_fun__:\n"
-"        msgbox('\"'+s+'\" not handled.')\n"
-"        return\n"
-"    try:\n"
-"        py_fun__[s](p1, p2)\n"
-"    except:\n"
-"        pass\n";
-
+;
 void _init_python()//call it before use other function else.
 {
 	Py_Initialize(); 
