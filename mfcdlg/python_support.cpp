@@ -5,6 +5,21 @@
 PyObject  *pRet = nullptr;
 PyObject  *pModule = nullptr;
 
+class CGIL
+{
+public:
+	CGIL()
+	{
+		gstate = PyGILState_Ensure();
+	}
+	~CGIL()
+	{
+		PyGILState_Release(gstate);
+	}
+protected:
+	PyGILState_STATE gstate;
+};
+
 char *pre_code =
 "import ctypes,os\n"
 
@@ -36,6 +51,7 @@ char *pre_code =
 void _init_python()//call it before use other function else.
 {
 	Py_Initialize(); 
+	PyEval_InitThreads();
 	Py_SetProgramName(_T(""));  /* optional but recommended */ //define APP_NAME first.
 	//makes sys.argv availiable.
 	LPTSTR cmd = ::GetCommandLine();
@@ -55,6 +71,7 @@ void _init_python()//call it before use other function else.
 
 void PysetObj(PyObject *p, int idx)
 {
+	CGIL gil;
 	PyObject_SetAttrString(pModule, PY_TMP_NAME, p);
 	Py_DECREF(p);
 	if (idx > -1)
@@ -89,6 +106,7 @@ void PySetDouble(double d, int idx)
 
 PyObject *PyGetObj(int idx)
 {
+	CGIL gil;
 	if (idx > -1)
 	{
 		char buf[100];
@@ -126,15 +144,18 @@ char *exe_cmd =
 ;
 int PyExecW(wchar_t *arg)
 {
+	CGIL gil;
 	PySetStrW(arg);
 	PyRun_SimpleString(exe_cmd);
 	return PyLong_AS_LONG(PyObject_GetAttrString(pModule, "__ok"));
 }
 int PyExecA(char *arg)
 {
+	CGIL gil;
 	PySetStrA(arg);
 	PyRun_SimpleString(exe_cmd);
-	return PyLong_AS_LONG(PyObject_GetAttrString(pModule, "__ok"));
+	int ret= PyLong_AS_LONG(PyObject_GetAttrString(pModule, "__ok"));
+	return ret;
 }
 char *eval_cmd =
 "try:\n"
@@ -146,6 +167,7 @@ char *eval_cmd =
 ;
 int PyEvalW(wchar_t *arg)
 {
+	CGIL gil;
 	PySetStrW(arg);
 	PyRun_SimpleString(eval_cmd);
 	return PyLong_AS_LONG(PyObject_GetAttrString(pModule, "__ok"));
@@ -153,6 +175,7 @@ int PyEvalW(wchar_t *arg)
 
 int PyEvalA(char *arg)
 {
+	CGIL gil;
 	PySetStrA(arg);
 	PyRun_SimpleString(eval_cmd);
 	return PyLong_AS_LONG(PyObject_GetAttrString(pModule, "__ok"));
@@ -168,6 +191,7 @@ char *evals_cmd =
 ;
 wchar_t *PyEvalOrExecW(wchar_t *arg)
 {
+	CGIL gil;
 	PySetStrW(arg);
 	PyRun_SimpleString(evals_cmd);
 	if (PyLong_AS_LONG(PyObject_GetAttrString(pModule, "__ok")))
@@ -183,6 +207,7 @@ wchar_t *PyEvalOrExecW(wchar_t *arg)
 
 int PyRunFile(wchar_t *fn)
 {
+	CGIL gil;
 	PySetStrW(fn);
 	return PyExecW(_T("exec(open(__c2p2c__).read())"));
 }
@@ -195,11 +220,6 @@ int PyRunFile(wchar_t *fn)
 void reg_exe_fun(char *fnn, char *fmt, void *pfn,char *doc)
 {
 	PyObject_CallMethod(pModule, "build_exe_fun__", "ssIs", fnn, fmt, pfn,doc);
-}
-
-void PySendMsg(char *msg, unsigned int p1,unsigned int p2)
-{
-	PyObject_CallMethod(pModule, "on_msg__", "sII", msg, p1, p2);
 }
 
 void InteractInConsole()

@@ -162,13 +162,23 @@ HCURSOR CmfcdlgDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-
+UINT thd_fun(LPVOID x)
+{
+	PyExecA("a='a'*10");
+	PyEvalA("a");
+	AfxMessageBox(PyGetStr());
+	return 0;
+}
 
 void CmfcdlgDlg::OnBnClickedOk()
 {
-	PySetDouble(0.123456789, 0);
-	PySetInt(123123123123123, 1);
-	PySetStrA("abcd", 2);
+	AfxBeginThread(thd_fun, 0);
+	AfxBeginThread(thd_fun, 0);
+	AfxBeginThread(thd_fun, 0);
+	AfxBeginThread(thd_fun, 0);
+	PySetStrA("abc", 2);
+	PyExecA("msgbox(stack__[2])");
+
 
 	//CDialogEx::OnOK();
 }
