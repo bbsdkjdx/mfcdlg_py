@@ -221,7 +221,9 @@ void InteractInConsole()
 	DWORD dwCount = 0;//ÒÑÊäÈëÊý
 	HANDLE hdlRead = GetStdHandle(STD_INPUT_HANDLE);
 	HANDLE hdlWrite = GetStdHandle(STD_OUTPUT_HANDLE);
-//	WriteConsole(hdlWrite, _T("press Ctrl+C to quit.\n"), 22, NULL, NULL);
+
+	SetConsoleTextAttribute((HANDLE)hdlWrite,  FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+
 	while (1)
 	{
 		WriteConsole(hdlWrite, _T(">>"), 2, NULL, NULL);
