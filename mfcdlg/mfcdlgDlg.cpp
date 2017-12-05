@@ -106,7 +106,6 @@ BOOL CmfcdlgDlg::OnInitDialog()
 	//  执行此操作
 	SetIcon(m_hIcon, TRUE);			// 设置大图标
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
-
 	// TODO:  在此添加额外的初始化代码
 	REG_EXE_FUN(test1, "lll", "int test1(int,int)\nimplement add operation.");
 	REG_EXE_FUN(test2, "lll", "int test2(int,int)\nimplement subtract operation.");
@@ -164,20 +163,26 @@ HCURSOR CmfcdlgDlg::OnQueryDragIcon()
 
 UINT thd_fun(LPVOID x)
 {
-	PyExecA("a='a'*10");
-	PyEvalA("a");
-	AfxMessageBox(PyGetStr());
+	PyExecA("import winsound,time");
+	int y = int(x);
+	PySetInt(y,0);
+	while (y)
+	{
+		PyExecA("winsound.Beep(1000,300);time.sleep(0.3)");
+		y--;
+	}
 	return 0;
 }
 
 void CmfcdlgDlg::OnBnClickedOk()
 {
-	AfxBeginThread(thd_fun, 0);
-	AfxBeginThread(thd_fun, 0);
-	AfxBeginThread(thd_fun, 0);
-	AfxBeginThread(thd_fun, 0);
-	PySetStrA("abc", 2);
-	PyExecA("msgbox(stack__[2])");
+	
+	AfxBeginThread(thd_fun, (LPVOID)10);
+	AfxBeginThread(thd_fun, (LPVOID)5);
+//	AfxBeginThread(thd_fun, 0);
+	//AfxBeginThread(thd_fun, 0);
+	//PySetStrA("abc", 2);
+	//PyExecA("msgbox(stack__[2])");
 
 
 	//CDialogEx::OnOK();

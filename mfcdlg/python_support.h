@@ -3,8 +3,9 @@
 
 #define  PY_TMP_NAME "__c2p2c__"
 
+//assign a string to stack__[idx],if idx is -1,assign to py_tmp_name.
 void PySetStrA(char *arg, int idx=-1);
-void PySetStrW(wchar_t *arg, int idx = -1);//assign arg to TMP_NAME in python.;
+void PySetStrW(wchar_t *arg, int idx = -1);
 void PySetInt(INT64 x, int idx = -1);//assign arg to TMP_NAME in python.;
 void PySetDouble(double d, int idx=-1);
 wchar_t *PyGetStr(int idx = -1);//get value of TMP_NAME in python.;
@@ -26,3 +27,18 @@ void InteractInConsole();
 #define REG_EXE_FUN(fun,fmt,doc) reg_exe_fun(#fun,fmt,&fun,doc);
 //example:REG_EXE_FUN(ChangeExeIcon, "#SS","void(wchar* ico,wchar* exe)");
 void reg_exe_fun(char *fnn, char *fmt, void *pfn,char *doc);
+
+class CGIL
+{
+public:
+	CGIL()
+	{
+		gstate = PyGILState_Ensure();
+	}
+	~CGIL()
+	{
+		PyGILState_Release(gstate);
+	}
+protected:
+	PyGILState_STATE gstate;
+};

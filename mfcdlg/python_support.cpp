@@ -5,20 +5,7 @@
 PyObject  *pRet = nullptr;
 PyObject  *pModule = nullptr;
 
-class CGIL
-{
-public:
-	CGIL()
-	{
-		gstate = PyGILState_Ensure();
-	}
-	~CGIL()
-	{
-		PyGILState_Release(gstate);
-	}
-protected:
-	PyGILState_STATE gstate;
-};
+
 
 char *pre_code =
 "import ctypes,os\n"
@@ -67,6 +54,7 @@ void _init_python()//call it before use other function else.
 	SetCurrentDirectory(str.GetBuffer());
 
 	pModule = PyImport_ImportModule("__main__");
+	PyEval_SaveThread();
 }
 
 void PysetObj(PyObject *p, int idx)
@@ -219,6 +207,7 @@ int PyRunFile(wchar_t *fn)
 //'f' : 'ctypes.c_float', 'F' : 'ctypes.c_double' 
 void reg_exe_fun(char *fnn, char *fmt, void *pfn,char *doc)
 {
+	CGIL gil;
 	PyObject_CallMethod(pModule, "build_exe_fun__", "ssIs", fnn, fmt, pfn,doc);
 }
 
