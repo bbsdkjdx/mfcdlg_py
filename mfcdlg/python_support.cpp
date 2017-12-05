@@ -247,8 +247,9 @@ void InteractInConsole()
 		{
 			continue;
 		}
-		WriteConsole(hdlWrite, ptc, wcslen(ptc), NULL, NULL);
-		WriteConsole(hdlWrite, _T("\n"), 1, NULL, NULL);
+		int len = wcslen(ptc);
+		WriteConsole(hdlWrite, ptc,len, NULL, NULL);
+		if (len)WriteConsole(hdlWrite, _T("\n"), 1, NULL, NULL);
 	}
 	FreeConsole();
 }
