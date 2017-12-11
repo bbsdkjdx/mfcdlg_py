@@ -29,6 +29,8 @@ public:
 // 实现
 protected:
 	DECLARE_MESSAGE_MAP()
+public:
+	virtual BOOL OnInitDialog();
 };
 
 CAboutDlg::CAboutDlg() : CDialogEx(CAboutDlg::IDD)
@@ -198,4 +200,51 @@ BOOL CmfcdlgDlg::PreTranslateMessage(MSG* pMsg)
 		ShowWindow(SW_SHOW);
 	}
 	return CDialogEx::PreTranslateMessage(pMsg);
+}
+
+
+BOOL CAboutDlg::OnInitDialog()
+{
+	CDialogEx::OnInitDialog();
+
+	// TODO:  在此添加额外的初始化
+	TCHAR szFullPath[MAX_PATH];
+	DWORD dwVerInfoSize = 0;
+	DWORD dwVerHnd;
+	VS_FIXEDFILEINFO * pFileInfo;
+
+	GetModuleFileName(NULL, szFullPath, sizeof(szFullPath));
+	dwVerInfoSize = GetFileVersionInfoSize(szFullPath, &dwVerHnd);
+	if (dwVerInfoSize)
+	{
+		// If we were able to get the information, process it:
+		HANDLE  hMem;
+		LPVOID  lpvMem;
+		unsigned int uInfoSize = 0;
+
+		hMem = GlobalAlloc(GMEM_MOVEABLE, dwVerInfoSize);
+		lpvMem = GlobalLock(hMem);
+		GetFileVersionInfo(szFullPath, dwVerHnd, dwVerInfoSize, lpvMem);
+
+		::VerQueryValue(lpvMem, (LPTSTR)_T("\\"), (void**)&pFileInfo, &uInfoSize);
+
+		int ret = GetLastError();
+		WORD m_nProdVersion[4];
+
+		// Product version from the FILEVERSION of the version info resource 
+		m_nProdVersion[0] = HIWORD(pFileInfo->dwProductVersionMS);
+		m_nProdVersion[1] = LOWORD(pFileInfo->dwProductVersionMS);
+		m_nProdVersion[2] = HIWORD(pFileInfo->dwProductVersionLS);
+		m_nProdVersion[3] = LOWORD(pFileInfo->dwProductVersionLS);
+
+		CString strVersion;
+		strVersion.Format(_T("系统 %d.%d.%d.%d版"), m_nProdVersion[0],
+			m_nProdVersion[1], m_nProdVersion[2], m_nProdVersion[3]);
+
+		GlobalUnlock(hMem);
+		GlobalFree(hMem);
+		GetDlgItem(IDC_STATIC_VRN)->SetWindowText(strVersion);
+	}
+	return TRUE;  // return TRUE unless you set the focus to a control
+	// 异常:  OCX 属性页应返回 FALSE
 }
