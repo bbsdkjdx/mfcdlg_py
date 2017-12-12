@@ -24,9 +24,9 @@ void InteractInConsole();
 //'l' : 'ctypes.c_int32',         'u' : 'ctypes.c_uint32',
 //'L' : 'ctypes.c_int64',         'U' : 'ctypes.c_uint64',
 //'f' : 'ctypes.c_float',         'F' : 'ctypes.c_double' 
-#define REG_EXE_FUN(fun,fmt,doc) reg_exe_fun(#fun,fmt,&fun,doc);
+#define REG_EXE_FUN(mod,fun,fmt,doc) reg_exe_fun(mod,#fun,fmt,&fun,doc);
 //example:REG_EXE_FUN(ChangeExeIcon, "#SS","void(wchar* ico,wchar* exe)");
-void reg_exe_fun(char *fnn, char *fmt, void *pfn,char *doc);
+void reg_exe_fun(char *mod,char *fnn, char *fmt, void *pfn,char *doc);
 
 class CGIL
 {

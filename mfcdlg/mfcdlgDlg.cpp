@@ -109,8 +109,10 @@ BOOL CmfcdlgDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// 设置大图标
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
 	// TODO:  在此添加额外的初始化代码
-	REG_EXE_FUN(test1, "lll", "int test1(int,int)\nimplement add operation.");
-	REG_EXE_FUN(test2, "lll", "int test2(int,int)\nimplement subtract operation.");
+	REG_EXE_FUN("maindlg", test1, "lll", "int test1(int,int)\nimplement add operation.");
+	REG_EXE_FUN("maindlg", test2, "lll", "int test2(int,int)\nimplement subtract operation.");
+	REG_EXE_FUN("abtdlg", test1, "lll", "int test1(int,int)\nimplement add operation.");
+	REG_EXE_FUN("abtdlg", test2, "lll", "int test2(int,int)\nimplement subtract operation.");
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
 

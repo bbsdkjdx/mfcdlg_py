@@ -18,12 +18,12 @@ char *pre_code =
 " ctypes.windll.user32.MessageBoxW(ctypes.windll.user32.GetForegroundWindow(),str(s),title,0x40)\n"
 
 //define exe funciton management class,exe is the object,type it can see all functions.
-"class CEXEFUN(object):\n"
+"class CAnything(object):\n"
 "    def __repr__(self):\n"
 "        dic=self.__dict__\n"
-"        return '\\n**************************************************\\n'.join((x+':\\n'+dic[x].__doc__ for x in dic))\n"
-"exe=CEXEFUN()\n"
-"def build_exe_fun__(fnn, fmt, adr,doc):\n"
+"        return '\\n**************************************************\\n'.join((x+'\\n'+dic[x].__dict__.get('__doc__','') for x in dic))\n"
+"exe=CAnything()\n"
+"def build_exe_fun__(mod,fnn, fmt, adr,doc):\n"
 "    dic = {'#': 'ctypes.c_void_p', \n"
 "           's':'ctypes.c_char_p','S': 'ctypes.c_wchar_p',\n"
 "           'l': 'ctypes.c_int32', 'u': 'ctypes.c_uint32',\n"
@@ -32,8 +32,9 @@ char *pre_code =
 "    cmd = 'ctypes.CFUNCTYPE('\n"
 "    cmd += ','.join(map(lambda x: dic[x], fmt))\n"
 "    cmd += ')('+str(adr)+')'\n"
-"    exe.__dict__[fnn] = eval(cmd)\n"
-"    exe.__dict__[fnn].__doc__=doc\n"
+"    if mod not in exe.__dict__:exe.__dict__[mod]=CAnything()\n"
+"    exe.__dict__[mod].__dict__[fnn] = eval(cmd)\n"
+"    exe.__dict__[mod].__dict__[fnn].__doc__=doc\n"
 ;
 void _init_python()//call it before use other function else.
 {
@@ -205,10 +206,10 @@ int PyRunFile(wchar_t *fn)
 //'l' : 'ctypes.c_int32', 'u' : 'ctypes.c_uint32',
 //'L' : 'ctypes.c_int64', 'U' : 'ctypes.c_uint64',
 //'f' : 'ctypes.c_float', 'F' : 'ctypes.c_double' 
-void reg_exe_fun(char *fnn, char *fmt, void *pfn,char *doc)
+void reg_exe_fun(char *mod,char *fnn, char *fmt, void *pfn,char *doc)
 {
 	CGIL gil;
-	PyObject_CallMethod(pModule, "build_exe_fun__", "ssIs", fnn, fmt, pfn,doc);
+	PyObject_CallMethod(pModule, "build_exe_fun__", "sssIs",mod, fnn, fmt, pfn,doc);
 }
 
 void InteractInConsole()
