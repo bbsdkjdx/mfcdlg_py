@@ -8,7 +8,7 @@ PyObject  *pModule = nullptr;
 
 
 char *pre_code =
-"import ctypes,os\n"
+"import ctypes,os,traceback\n"
 
 //stack to transform parameters between exe and python.
 "stack__=[0]*50\n"
@@ -128,7 +128,7 @@ char *exe_cmd =
 "    __ok=1\n"
 "except Exception as exp:\n"
 "    import sys\n"
-"    "PY_TMP_NAME"=str(exp)\n"//+str(sys._getframe().f_locals)\n"
+"    "PY_TMP_NAME"=traceback.format_exc()\n"//+str(sys._getframe().f_locals)\n"
 "    __ok=0"
 ;
 int PyExecW(wchar_t *arg)
@@ -151,7 +151,7 @@ char *eval_cmd =
 "    "PY_TMP_NAME"=eval("PY_TMP_NAME")\n"
 "    __ok=1\n"
 "except Exception as exp : \n"
-"    "PY_TMP_NAME" =str(exp)\n"
+"    "PY_TMP_NAME" =traceback.format_exc()\n"
 "    __ok=0"
 ;
 int PyEvalW(wchar_t *arg)
@@ -175,7 +175,7 @@ char *evals_cmd =
 "    "PY_TMP_NAME"=str(eval("PY_TMP_NAME"))\n"
 "    __ok=1\n"
 "except Exception as exp : \n"
-"    "PY_TMP_NAME" =str(exp)\n"
+"    "PY_TMP_NAME" =traceback.format_exc()\n"
 "    __ok=0"
 ;
 wchar_t *PyEvalOrExecW(wchar_t *arg)
