@@ -17,7 +17,7 @@ int PyEvalW(wchar_t *arg);
 int PyEvalA(char *arg);//eval(arg).return true if success,use PyGetStr() to get result.;
 wchar_t *PyEvalOrExecW(wchar_t *arg);
 int PyRunFile(wchar_t *fn);
-void InteractInConsole(bool block);
+void InteractInConsole(HWND parent_wnd, bool block);
 
 //'#':'ctypes.c_void_p', 
 //'s' : 'ctypes.c_char_p',        'S' : 'ctypes.c_wchar_p',

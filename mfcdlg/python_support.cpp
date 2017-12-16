@@ -245,21 +245,25 @@ void _InteractInConsole(void *para)
 
 
 	ShowWindow(hwn, SW_HIDE);
+	if (para)
+	{
+		SetForegroundWindow((HWND)para);
+	}
 	has_thread = false;
 //	FreeConsole();
 }
 
-void InteractInConsole(bool block)
+void InteractInConsole(HWND parent_wnd, bool block)
 {
 	if (block)
 	{
-		_InteractInConsole(0);
+		_InteractInConsole(parent_wnd);
 	}
 	else
 	{
 		if (!has_thread)
 		{
-			_beginthread(_InteractInConsole, 0, 0);
+			_beginthread(_InteractInConsole, 0, parent_wnd);
 			has_thread = true;
 		}
 	}

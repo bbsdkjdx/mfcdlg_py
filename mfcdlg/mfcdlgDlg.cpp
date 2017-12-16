@@ -186,7 +186,7 @@ void CmfcdlgDlg::OnBnClickedOk()
 //	AfxBeginThread(thd_fun, 0);
 	//AfxBeginThread(thd_fun, 0);
 	PySetStrA("abc", 2);
-	//PyExecA("msgbox(stack__[2])");
+	PyExecA("print(123)");
 
 
 	//CDialogEx::OnOK();
@@ -198,7 +198,7 @@ BOOL CmfcdlgDlg::PreTranslateMessage(MSG* pMsg)
 	if (pMsg->message == 256 && pMsg->wParam == 123 && GetAsyncKeyState(0x11) & 0x8000)//Ctrl+F12 pressed.
 	{
 		//ShowWindow(SW_HIDE);
-		InteractInConsole(true);
+		InteractInConsole(m_hWnd,false);
 		//InteractInConsole();
 		//ShowWindow(SW_SHOW);
 	}
