@@ -214,45 +214,35 @@ void reg_exe_fun(char *mod,char *fnn, char *fmt, void *pfn,char *doc)
 
 void InteractInConsole()
 {
-	AllocConsole();
-	SetConsoleTitleA("press Ctrl+C to quit.");
 
 	HWND hwn = ::GetConsoleWindow();
-	if (hwn)
+	if (!hwn)
 	{
+		AllocConsole();
+		SetConsoleTitleA("press Ctrl+C to quit.");
+		hwn = ::GetConsoleWindow();
 		HMENU mn = ::GetSystemMenu(hwn, FALSE);
 		if (mn)
 		{
 			DeleteMenu(mn, SC_CLOSE, MF_BYCOMMAND);
 		}
 	}
-	SetConsoleCtrlHandler(0, true);
-	TCHAR Buffer[1000]; //开缓存
-	DWORD dwCount = 0;//已输入数
-	HANDLE hdlRead = GetStdHandle(STD_INPUT_HANDLE);
+	ShowWindow(hwn, SW_SHOW);
+	//SetWindowPos(hwn, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE);
+	SetForegroundWindow(hwn);
+	SetConsoleCtrlHandler(0, true);//handle Ctrl+C.
+
+//	HANDLE hdlRead = GetStdHandle(STD_INPUT_HANDLE);
 	HANDLE hdlWrite = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleTextAttribute((HANDLE)hdlWrite, FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 
-	SetConsoleTextAttribute((HANDLE)hdlWrite,  FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+	char *cmd1 = "import sys;sys.stdout=open('CONOUT$', 'wt');sys.stderr=sys.stdout;sys.stdin=open('CONIN$', 'rt')";
+	char *cmd3 = "import code;code.interact(banner='', readfunc=None, local=locals()) ";
+	if (!PyExecA(cmd1))AfxMessageBox(PyGetStr());
+	if (!PyExecA(cmd3))AfxMessageBox(PyGetStr());
 
-	while (1)
-	{
-		WriteConsole(hdlWrite, _T(">>"), 2, NULL, NULL);
-		ReadConsole(hdlRead, Buffer, 1000, &dwCount, NULL);
-		if (!dwCount)
-		{
-			break;
-		}
-		Buffer[dwCount - 2] = 0;//delete '\n\r'
-		TCHAR *ptc = PyEvalOrExecW(Buffer);
-		if (ptc[0]==0)
-		{
-			continue;
-		}
-		int len = wcslen(ptc);
-		WriteConsole(hdlWrite, ptc,len, NULL, NULL);
-		if (len)WriteConsole(hdlWrite, _T("\n"), 1, NULL, NULL);
-	}
-	FreeConsole();
+	ShowWindow(hwn, SW_HIDE);
+//	FreeConsole();
 }
 
 ///////////////////////auto initialize python.///////////////////////////////
