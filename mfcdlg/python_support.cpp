@@ -212,38 +212,59 @@ void reg_exe_fun(char *mod,char *fnn, char *fmt, void *pfn,char *doc)
 	PyObject_CallMethod(pModule, "build_exe_fun__", "sssIs",mod, fnn, fmt, pfn,doc);
 }
 
-void InteractInConsole()
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+bool has_thread = false;//indicate that has a console thread.
+void _InteractInConsole(void *para)
 {
-
+	CGIL gil;
 	HWND hwn = ::GetConsoleWindow();
 	if (!hwn)
 	{
 		AllocConsole();
 		SetConsoleTitleA("press Ctrl+C to quit.");
 		hwn = ::GetConsoleWindow();
+
 		HMENU mn = ::GetSystemMenu(hwn, FALSE);
-		if (mn)
-		{
-			DeleteMenu(mn, SC_CLOSE, MF_BYCOMMAND);
-		}
+		if (mn)DeleteMenu(mn, SC_CLOSE, MF_BYCOMMAND);
+
+		HANDLE hdlWrite = GetStdHandle(STD_OUTPUT_HANDLE);
+		SetConsoleTextAttribute((HANDLE)hdlWrite, FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+
+		char *cmd1 = "import sys;sys.stdout=open('CONOUT$', 'wt');sys.stderr=sys.stdout;sys.stdin=open('CONIN$', 'rt')";
+		if (!PyExecA(cmd1))AfxMessageBox(PyGetStr());
+		SetConsoleCtrlHandler(0, true);//handle Ctrl+C.
 	}
+
 	ShowWindow(hwn, SW_SHOW);
-	//SetWindowPos(hwn, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE);
+	SetWindowPos(hwn, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE);
 	SetForegroundWindow(hwn);
-	SetConsoleCtrlHandler(0, true);//handle Ctrl+C.
 
 //	HANDLE hdlRead = GetStdHandle(STD_INPUT_HANDLE);
-	HANDLE hdlWrite = GetStdHandle(STD_OUTPUT_HANDLE);
-	SetConsoleTextAttribute((HANDLE)hdlWrite, FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+	char *cmd2 = "import code;code.interact(banner='', readfunc=None, local=locals())";
+	if (!PyExecA(cmd2))AfxMessageBox(PyGetStr());
 
-	char *cmd1 = "import sys;sys.stdout=open('CONOUT$', 'wt');sys.stderr=sys.stdout;sys.stdin=open('CONIN$', 'rt')";
-	char *cmd3 = "import code;code.interact(banner='', readfunc=None, local=locals()) ";
-	if (!PyExecA(cmd1))AfxMessageBox(PyGetStr());
-	if (!PyExecA(cmd3))AfxMessageBox(PyGetStr());
 
 	ShowWindow(hwn, SW_HIDE);
+	has_thread = false;
 //	FreeConsole();
 }
+
+void InteractInConsole(bool block)
+{
+	if (block)
+	{
+		_InteractInConsole(0);
+	}
+	else
+	{
+		if (!has_thread)
+		{
+			_beginthread(_InteractInConsole, 0, 0);
+			has_thread = true;
+		}
+	}
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////auto initialize python.///////////////////////////////
 class PY_INITIALIZER

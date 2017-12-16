@@ -181,11 +181,11 @@ UINT thd_fun(LPVOID x)
 void CmfcdlgDlg::OnBnClickedOk()
 {
 	
-	AfxBeginThread(thd_fun, (LPVOID)10);
-	AfxBeginThread(thd_fun, (LPVOID)5);
+	//AfxBeginThread(thd_fun, (LPVOID)10);
+	//AfxBeginThread(thd_fun, (LPVOID)5);
 //	AfxBeginThread(thd_fun, 0);
 	//AfxBeginThread(thd_fun, 0);
-	//PySetStrA("abc", 2);
+	PySetStrA("abc", 2);
 	//PyExecA("msgbox(stack__[2])");
 
 
@@ -197,9 +197,10 @@ BOOL CmfcdlgDlg::PreTranslateMessage(MSG* pMsg)
 {
 	if (pMsg->message == 256 && pMsg->wParam == 123 && GetAsyncKeyState(0x11) & 0x8000)//Ctrl+F12 pressed.
 	{
-		ShowWindow(SW_HIDE);
-		InteractInConsole();
-		ShowWindow(SW_SHOW);
+		//ShowWindow(SW_HIDE);
+		InteractInConsole(true);
+		//InteractInConsole();
+		//ShowWindow(SW_SHOW);
 	}
 	return CDialogEx::PreTranslateMessage(pMsg);
 }
