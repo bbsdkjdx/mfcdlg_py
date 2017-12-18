@@ -214,6 +214,11 @@ void reg_exe_fun(char *mod,char *fnn, char *fmt, void *pfn,char *doc)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 bool has_thread = false;//indicate that has a console thread.
+
+struct ThreadParameter
+{
+	HWND hwn_parent;
+};
 void _InteractInConsole(void *para)
 {
 	CGIL gil;
@@ -245,9 +250,10 @@ void _InteractInConsole(void *para)
 
 
 	ShowWindow(hwn, SW_HIDE);
-	if (para)
+	ThreadParameter *p = (ThreadParameter*)para;
+	if (p->hwn_parent)
 	{
-		SetForegroundWindow((HWND)para);
+		SetForegroundWindow(p->hwn_parent);
 	}
 	has_thread = false;
 //	FreeConsole();
@@ -255,15 +261,17 @@ void _InteractInConsole(void *para)
 
 void InteractInConsole(HWND parent_wnd, bool block)
 {
+	static ThreadParameter tp;
+	tp.hwn_parent = parent_wnd;
 	if (block)
 	{
-		_InteractInConsole(parent_wnd);
+		_InteractInConsole(&tp);
 	}
 	else
 	{
 		if (!has_thread)
 		{
-			_beginthread(_InteractInConsole, 0, parent_wnd);
+			_beginthread(_InteractInConsole, 0, &tp);
 			has_thread = true;
 		}
 	}
